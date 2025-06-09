@@ -673,6 +673,15 @@ with col2:
             st.info("Generate a visualization to see vector information")
 
 # Sidebar
+st.markdown("""
+<style>
+/* Sidebar text color fix for dark mode */
+section[data-testid="stSidebar"] {
+    color: #fafafa !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 with st.sidebar:
     st.markdown("## Quick Guide")
     st.markdown("""
