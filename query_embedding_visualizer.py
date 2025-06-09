@@ -24,42 +24,253 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for Claude-inspired styling
+# Custom CSS for Claude-inspired styling with dark mode support
 st.markdown("""
 <style>
+    /* Light mode colors */
+    :root {
+        --bg-primary: #ffffff;
+        --bg-secondary: #fafafa;
+        --bg-tertiary: #f4f4f4;
+        --text-primary: #2d2d2d;
+        --text-secondary: #666666;
+        --text-heading: #1a1a1a;
+        --border-color: #e5e5e5;
+        --accent-color: #dc6b2f;
+        --accent-hover: #c55a24;
+        --code-bg: #f5f5f5;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Dark mode colors */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #333333;
+            --text-primary: #e5e5e5;
+            --text-secondary: #a0a0a0;
+            --text-heading: #ffffff;
+            --border-color: #444444;
+            --accent-color: #ff8c42;
+            --accent-hover: #ff7a2e;
+            --code-bg: #2d2d2d;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Dark mode specific adjustments */
+        .stApp {
+            background-color: var(--bg-primary) !important;
+        }
+        
+        /* Fix plotly charts for dark mode */
+        .js-plotly-plot .plotly .bg {
+            fill: var(--bg-secondary) !important;
+        }
+        
+        /* Info boxes in dark mode */
+        .stAlert {
+            background-color: var(--bg-secondary) !important;
+            color: var(--text-primary) !important;
+        }
+    }
+    
+    /* Apply color variables throughout */
     html, body, [class*="css"] {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         font-size: 18px;
         line-height: 1.6;
-        color: #2d2d2d;
-        background-color: #ffffff;
+        color: var(--text-primary);
+        background-color: var(--bg-primary);
     }
-    p, div, span, li, td, th { font-size: max(18px, 1rem) !important; }
-    h1 { font-size: 32px !important; font-weight: 600 !important; color: #1a1a1a !important; margin-bottom: 0.5rem !important; }
-    h2 { font-size: 26px !important; font-weight: 600 !important; color: #1a1a1a !important; }
-    h3 { font-size: 22px !important; font-weight: 600 !important; color: #1a1a1a !important; }
-    .main { padding: 2rem; background-color: #ffffff; }
-    section[data-testid="stSidebar"] { background-color: #fafafa; border-right: 1px solid #e5e5e5; }
+    
+    p, div, span, li, td, th { 
+        font-size: max(18px, 1rem) !important; 
+        color: var(--text-primary);
+    }
+    
+    h1, h2, h3 { 
+        color: var(--text-heading) !important; 
+    }
+    
+    h1 { font-size: 32px !important; font-weight: 600 !important; margin-bottom: 0.5rem !important; }
+    h2 { font-size: 26px !important; font-weight: 600 !important; }
+    h3 { font-size: 22px !important; font-weight: 600 !important; }
+    
+    .main { 
+        padding: 2rem; 
+        background-color: var(--bg-primary);
+    }
+    
+    section[data-testid="stSidebar"] { 
+        background-color: var(--bg-secondary); 
+        border-right: 1px solid var(--border-color); 
+    }
+    
+    /* Buttons */
     .stButton > button {
-        background-color: #dc6b2f; color: white; font-weight: 500; border-radius: 6px; border: none;
-        padding: 0.75rem 1.5rem; font-size: 18px !important; transition: all 0.2s;
+        background-color: var(--accent-color); 
+        color: white; 
+        font-weight: 500; 
+        border-radius: 6px; 
+        border: none;
+        padding: 0.75rem 1.5rem; 
+        font-size: 18px !important; 
+        transition: all 0.2s;
     }
+    
     .stButton > button:hover {
-        background-color: #c55a24; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(220, 107, 47, 0.2);
+        background-color: var(--accent-hover); 
+        transform: translateY(-1px); 
+        box-shadow: 0 2px 8px var(--shadow-color);
     }
-    .secondary-button > button { background-color: #ffffff; color: #2d2d2d; border: 1px solid #e5e5e5; }
-    .secondary-button > button:hover { background-color: #fafafa; border-color: #dc6b2f; color: #dc6b2f; }
-    .stTabs [data-baseweb="tab-list"] { gap: 2px; background-color: #f4f4f4; padding: 4px; border-radius: 8px; }
-    .stTabs [data-baseweb="tab"] { font-size: 18px !important; font-weight: 500; color: #666666; background-color: transparent; border-radius: 6px; padding: 8px 20px; }
-    .stTabs [data-baseweb="tab"][aria-selected="true"] { background-color: white; color: #1a1a1a; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .stTextInput > div > div > input, .stTextArea > div > div > textarea { font-size: 18px !important; border: 1px solid #e5e5e5; border-radius: 6px; padding: 0.75rem; }
-    .stTextInput > div > div > input:focus, .stTextArea > div > div > textarea:focus { border-color: #dc6b2f; box-shadow: 0 0 0 1px #dc6b2f; }
-    .stSelectbox > div > div { font-size: 18px !important; }
-    [data-testid="metric-container"] { background-color: #fafafa; border: 1px solid #e5e5e5; padding: 1.25rem; border-radius: 6px; }
-    .info-box { background-color: #fafafa; border: 1px solid #e5e5e5; border-radius: 8px; padding: 1.5rem; position: sticky; top: 2rem; }
-    .chunk-container { background-color: #fafafa; border: 1px solid #e5e5e5; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
-    .stHelp { font-size: 16px !important; color: #666666; }
-    .streamlit-expanderHeader { background-color: #fafafa; border: 1px solid #e5e5e5; border-radius: 6px; font-size: 18px !important; font-weight: 500; color: #1a1a1a; }
+    
+    .secondary-button > button { 
+        background-color: var(--bg-primary); 
+        color: var(--text-primary); 
+        border: 1px solid var(--border-color); 
+    }
+    
+    .secondary-button > button:hover { 
+        background-color: var(--bg-secondary); 
+        border-color: var(--accent-color); 
+        color: var(--accent-color); 
+    }
+    
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] { 
+        gap: 2px; 
+        background-color: var(--bg-tertiary); 
+        padding: 4px; 
+        border-radius: 8px; 
+    }
+    
+    .stTabs [data-baseweb="tab"] { 
+        font-size: 18px !important; 
+        font-weight: 500; 
+        color: var(--text-secondary); 
+        background-color: transparent; 
+        border-radius: 6px; 
+        padding: 8px 20px; 
+    }
+    
+    .stTabs [data-baseweb="tab"][aria-selected="true"] { 
+        background-color: var(--bg-primary); 
+        color: var(--text-heading); 
+        box-shadow: 0 1px 3px var(--shadow-color); 
+    }
+    
+    /* Input fields */
+    .stTextInput > div > div > input, 
+    .stTextArea > div > div > textarea,
+    .stSelectbox > div > div > select { 
+        font-size: 18px !important; 
+        border: 1px solid var(--border-color); 
+        border-radius: 6px; 
+        padding: 0.75rem;
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+    
+    .stTextInput > div > div > input:focus, 
+    .stTextArea > div > div > textarea:focus { 
+        border-color: var(--accent-color); 
+        box-shadow: 0 0 0 1px var(--accent-color); 
+    }
+    
+    .stSelectbox > div > div { 
+        font-size: 18px !important; 
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+    
+    /* Metrics */
+    [data-testid="metric-container"] { 
+        background-color: var(--bg-secondary); 
+        border: 1px solid var(--border-color); 
+        padding: 1.25rem; 
+        border-radius: 6px; 
+    }
+    
+    /* Info boxes */
+    .info-box { 
+        background-color: var(--bg-secondary); 
+        border: 1px solid var(--border-color); 
+        border-radius: 8px; 
+        padding: 1.5rem; 
+        position: sticky; 
+        top: 2rem; 
+    }
+    
+    /* Chunk containers */
+    .chunk-container { 
+        background-color: var(--bg-secondary); 
+        border: 1px solid var(--border-color); 
+        border-radius: 8px; 
+        padding: 1rem; 
+        margin-bottom: 1rem; 
+    }
+    
+    /* Help text */
+    .stHelp { 
+        font-size: 16px !important; 
+        color: var(--text-secondary); 
+    }
+    
+    /* Expanders */
+    .streamlit-expanderHeader { 
+        background-color: var(--bg-secondary); 
+        border: 1px solid var(--border-color); 
+        border-radius: 6px; 
+        font-size: 18px !important; 
+        font-weight: 500; 
+        color: var(--text-heading); 
+    }
+    
+    /* Code blocks */
+    pre {
+        background-color: var(--code-bg) !important;
+        color: var(--text-primary) !important;
+    }
+    
+    /* Markdown content */
+    .stMarkdown {
+        color: var(--text-primary);
+    }
+    
+    /* Radio buttons and checkboxes */
+    .stRadio > label,
+    .stCheckbox > label {
+        color: var(--text-primary) !important;
+    }
+    
+    /* Download button */
+    .stDownloadButton > button {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+    }
+    
+    .stDownloadButton > button:hover {
+        background-color: var(--bg-tertiary);
+        border-color: var(--accent-color);
+    }
+    
+    /* Data frames */
+    .dataframe {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+    }
+    
+    .dataframe th {
+        background-color: var(--bg-secondary) !important;
+        color: var(--text-heading) !important;
+    }
+    
+    .dataframe td {
+        background-color: var(--bg-primary) !important;
+        color: var(--text-primary) !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -482,8 +693,11 @@ if 'viz_df' in st.session_state:
                 y=0.99,
                 xanchor="left",
                 x=0.01,
-                bgcolor="rgba(255, 255, 255, 0.8)"
-            )
+                bgcolor="rgba(255, 255, 255, 0.8)" if st.get_option("theme.base") != "dark" else "rgba(0, 0, 0, 0.8)",
+                font=dict(color="#2d2d2d" if st.get_option("theme.base") != "dark" else "#e5e5e5")
+            ),
+            paper_bgcolor='rgba(0,0,0,0)',  # Transparent background
+            plot_bgcolor='rgba(0,0,0,0)'    # Transparent plot area
         )
         
         if projection_mode == "3D":
@@ -673,15 +887,6 @@ with col2:
             st.info("Generate a visualization to see vector information")
 
 # Sidebar
-st.markdown("""
-<style>
-/* Sidebar text color fix for dark mode */
-section[data-testid="stSidebar"] {
-    color: #fafafa !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
 with st.sidebar:
     st.markdown("## Quick Guide")
     st.markdown("""
